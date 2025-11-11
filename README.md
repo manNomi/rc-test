@@ -88,14 +88,27 @@ With eslint-disable:
 
 ## 📋 What to Do
 
-### Detailed Bug Report
-**[BUG_REPORT.md](./BUG_REPORT.md)** - Issue report to submit to React team
+### 1. Understand the Problem
+**[CORE_ISSUE.md](./CORE_ISSUE.md)** - Read this first to understand the core problem
 
-### Submit Issue
-1. Create GitHub repository (this project)
-2. Submit React issue: https://github.com/facebook/react/issues
-3. Copy BUG_REPORT.md content
-4. Include repository URL
+### 2. Review the Bug Report
+**[BUG_REPORT.md](./BUG_REPORT.md)** - Detailed technical analysis for React team
+
+### 3. Check the Solution Proposal
+**[PROPOSAL.md](./PROPOSAL.md)** - 💡 Proposed ESLint rule to prevent this issue
+
+### 4. Submit Issues
+
+#### Option A: Report the Bug
+1. Go to React repository: https://github.com/facebook/react/issues
+2. Create new issue with BUG_REPORT.md content
+3. Include this repository URL
+
+#### Option B: Propose the Solution
+1. Go to React repository: https://github.com/facebook/react/issues
+2. Create new issue with PROPOSAL.md content
+3. Title: "[Proposal] ESLint rule to detect React Compiler interference"
+4. Or create PR for eslint-plugin-react-hooks
 
 ### Workarounds
 
@@ -134,6 +147,7 @@ function Component() {
 ```
 ├── CORE_ISSUE.md                    # 📌 Core problem explanation (READ THIS FIRST!)
 ├── BUG_REPORT.md                    # Detailed bug report for React team
+├── PROPOSAL.md                      # 💡 Solution: New ESLint rule to detect this issue
 ├── README.md                        # This file
 └── src/
     ├── hooks/
@@ -147,7 +161,9 @@ function Component() {
         └── mockApi.ts                   # Mock data
 ```
 
-**Start here:** Read `CORE_ISSUE.md` to understand the core problem.
+**Start here:** 
+1. Read `CORE_ISSUE.md` to understand the problem
+2. Read `PROPOSAL.md` to see the proposed solution
 
 ---
 
