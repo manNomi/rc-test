@@ -93,37 +93,63 @@ With eslint-disable:
 ### 1. Understand the Problem
 **[CORE_ISSUE.md](./CORE_ISSUE.md)** - Read this first to understand the core problem
 
-### 2. Review the Bug Report
-**[BUG_REPORT.md](./BUG_REPORT.md)** - Detailed technical analysis for React team
+### 2. Choose Your Approach
 
-### 3. Check the Solution Proposal
-**[PROPOSAL.md](./PROPOSAL.md)** - 💡 Proposed ESLint rule to prevent this issue
+We have **TWO solutions** - pick the one that fits best:
 
-### 4. Submit Issues
+#### 🚀 Option A: Enhance React Compiler (RECOMMENDED!)
 
-#### Option A: Report the Bug
-1. Go to React repository: https://github.com/facebook/react/issues
-2. Create new issue with BUG_REPORT.md content
-3. Include this repository URL
+**What:** Improve React Compiler's warning message  
+**Where:** facebook/react repository  
+**Risk:** Zero (message only)  
+**Timeline:** ~4 days  
+**Approval:** 70-80% likely
 
-#### Option B: Propose the Solution (Recommended!)
+**Documents:**
+- **[OPTION_A_PROPOSAL.md](./OPTION_A_PROPOSAL.md)** - Complete detailed proposal
+- **[OPTION_A_ISSUE.md](./OPTION_A_ISSUE.md)** - Ready to submit issue
 
-Choose one of the templates:
+**Why choose this:**
+- ✅ Zero risk (only changes warning text)
+- ✅ Fast implementation
+- ✅ Addresses josephsavona's feedback from #34027
+- ✅ Immediate value for all React Compiler users
 
-**Long Version** (comprehensive):
-1. Copy content from `ISSUE_TEMPLATE.md`
+**Submit:**
+1. Copy content from `OPTION_A_ISSUE.md`
 2. Go to: https://github.com/facebook/react/issues/new
 3. Paste and submit
 
-**Short Version** (concise):
-1. Copy content from `ISSUE_TEMPLATE_SHORT.md`
+#### 🛠️ Option B: New ESLint Rule
+
+**What:** Create new ESLint rule to detect the pattern  
+**Where:** eslint-plugin-react-hooks  
+**Risk:** Low (new feature)  
+**Timeline:** 1-2 weeks  
+**Approval:** 50-60% likely
+
+**Documents:**
+- **[PROPOSAL.md](./PROPOSAL.md)** - Complete rule specification
+- **[ISSUE_TEMPLATE.md](./ISSUE_TEMPLATE.md)** - Long version issue
+- **[ISSUE_TEMPLATE_SHORT.md](./ISSUE_TEMPLATE_SHORT.md)** - Short version issue
+
+**Why choose this:**
+- ✅ More proactive detection
+- ✅ Can provide auto-fixes
+- ✅ Works in all scenarios
+
+**Submit:**
+1. Copy content from `ISSUE_TEMPLATE_SHORT.md` or `ISSUE_TEMPLATE.md`
 2. Go to: https://github.com/facebook/react/issues/new
 3. Paste and submit
 
-Or contribute directly:
-4. Fork `eslint-plugin-react-hooks`
-5. Implement the rule based on `PROPOSAL.md`
-6. Submit PR
+### 3. Or Just Report the Bug
+
+**[BUG_REPORT.md](./BUG_REPORT.md)** - Just report the issue without proposing solution
+
+1. Go to: https://github.com/facebook/react/issues/new
+2. Copy BUG_REPORT.md content
+3. Submit
 
 ### Workarounds
 
@@ -162,11 +188,18 @@ function Component() {
 ```
 ├── SUMMARY.md                       # 🎯 START HERE - Complete project overview
 ├── CORE_ISSUE.md                    # 📌 Core problem explanation
-├── BUG_REPORT.md                    # 🐛 Detailed bug report for React team
-├── PROPOSAL.md                      # 💡 Solution: New ESLint rule proposal
-├── ISSUE_TEMPLATE.md                # 📝 Long version - Copy/paste to submit issue
-├── ISSUE_TEMPLATE_SHORT.md          # 📝 Short version - Quick issue submission
-├── README.md                        # This file
+│
+├── 🚀 Option A: Enhance React Compiler (RECOMMENDED!)
+│   ├── OPTION_A_PROPOSAL.md         # Complete detailed proposal
+│   └── OPTION_A_ISSUE.md            # Ready to submit issue template
+│
+├── 🛠️ Option B: New ESLint Rule
+│   ├── PROPOSAL.md                  # Complete rule specification
+│   ├── ISSUE_TEMPLATE.md            # Long version issue template
+│   └── ISSUE_TEMPLATE_SHORT.md      # Short version issue template
+│
+├── BUG_REPORT.md                    # 🐛 Detailed bug report (no solution)
+└── README.md                        # This file
 └── src/
     ├── hooks/
     │   ├── useIncompatibleMovieList.ts  # Bug reproduction (line 78, 100)
@@ -182,8 +215,9 @@ function Component() {
 **Reading order:** 
 1. `SUMMARY.md` - Complete overview (recommended first read)
 2. `CORE_ISSUE.md` - Understand the core problem
-3. `PROPOSAL.md` - See the proposed solution
-4. `ISSUE_TEMPLATE_SHORT.md` or `ISSUE_TEMPLATE.md` - Submit to React team
+3. **Choose your path:**
+   - **Path A (Recommended):** `OPTION_A_PROPOSAL.md` → `OPTION_A_ISSUE.md` → Submit
+   - **Path B:** `PROPOSAL.md` → `ISSUE_TEMPLATE_SHORT.md` → Submit
 
 ---
 
