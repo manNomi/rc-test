@@ -4,42 +4,53 @@
 
 When `eslint-disable-next-line react-hooks/exhaustive-deps` is used in a custom hook, it disables **ALL** `react-hooks` rules for the entire function, causing:
 
-1. **Custom hook is NOT memoized** (React Compiler skips optimization)
-2. **Component IS memoized** (React Compiler optimizes separately)
-3. **Hook returns new object references every render**
-4. **Component's memo cache is invalidated every render**
-5. **→ Unpredictable component behavior**
+1. **React Compiler abandons analysis of the entire hook**
+2. **⚠️ CRITICAL: `incompatible-library` warning is silently suppressed**
+3. **Custom hook returns unstable references (not memoized)**
+4. **Component IS memoized but cache is invalidated every render**
+5. **→ Silent failure - No warnings, impossible to debug**
 
-**Severity:** 🔴 Critical - Silent failure with production performance impact
+**Severity:** 🔴 Critical - **Warning system is broken, not just optimization**
+
+**Core Problem:** This is NOT just about optimization being disabled. The real issue is that **the warning system itself is silently broken**, making it impossible for developers to identify or debug the problem.
 
 ---
 
 ## 📋 Detailed Problem Description
 
-### The Broken Chain
+### The Broken Warning System
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ 1. Custom Hook (NOT memoized)                          │
-│    ❌ eslint-disable suppresses incompatible-library    │
-│    ❌ React Compiler skips optimization                 │
-│    ❌ Returns new object every render                   │
+│ 1. eslint-disable Added (seemingly innocent)            │
+│    Developer just wants to silence deps warning         │
+│    // eslint-disable-next-line react-hooks/exhaustive-deps│
 └─────────────────────────────────────────────────────────┘
                           ↓
 ┌─────────────────────────────────────────────────────────┐
-│ 2. Component (IS memoized)                              │
-│    ✅ React Compiler optimizes component                │
-│    ✅ useMemoCache implemented                          │
-│    ❌ BUT cache invalidated by new object references    │
+│ 2. React Compiler Abandons Analysis                     │
+│    ❌ Entire hook analysis is given up                   │
+│    ❌ Incompatible API check never runs                  │
+│    ❌ Warning system is BROKEN                           │
 └─────────────────────────────────────────────────────────┘
                           ↓
 ┌─────────────────────────────────────────────────────────┐
-│ 3. Result: Unpredictable Behavior                       │
-│    😴 No warnings (silent failure)                       │
-│    💥 Memo cache invalidated every render                │
-│    🐛 Component behaves unpredictably                    │
+│ 3. Developer Sees Nothing                                │
+│    ✅ ESLint: Clean (looks good!)                        │
+│    ✅ Build: Success                                     │
+│    😴 No warnings about incompatible API                 │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│ 4. Silent Failure in Production                          │
+│    💥 Hook returns unstable references                   │
+│    💥 Component memoization breaks                       │
+│    💥 Performance degrades                               │
+│    ❓ Developer cannot debug (no warnings!)              │
 └─────────────────────────────────────────────────────────┘
 ```
+
+**Key Insight:** The problem is not that optimization is disabled. The problem is that **the warning that would tell you about the problem is also disabled**.
 
 ---
 
@@ -258,7 +269,7 @@ function CustomHookPage() {
 ```typescript
 // Developer writes a clean custom hook
 function useVirtualScroll({...}) {
-  const rowVirtualizer = useVirtualizer({...});
+  const rowVirtualizer = useVirtualizer({...});  // ← Should warn here!
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -269,20 +280,28 @@ function useVirtualScroll({...}) {
 }
 ```
 
-**Developer thinks:**
+**Developer expects:**
 
-- ✅ ESLint is clean (no warnings)
-- ✅ TypeScript is happy
-- ✅ React Compiler is enabled
-- ✅ Component should be optimized
+- ✅ Line 2: Should show `incompatible-library` warning
+- ✅ Line 5-6: Only `exhaustive-deps` check disabled
+- ✅ I'll see the warning and handle it appropriately
 
-**Reality:**
+**What actually happens:**
 
-- ❌ Hook is NOT optimized (React Compiler skipped)
-- ❌ Hook returns new object every render
-- ❌ Component IS optimized but cache invalidated
-- ❌ Performance worse than no optimization
-- 😴 **Developer has NO way to know**
+- ❌ Line 2: NO warning (silently suppressed!)
+- ❌ React Compiler abandons entire hook analysis
+- ❌ Developer sees clean ESLint (thinks everything is fine)
+- ❌ Silent failure in production
+- 😴 **Developer has NO way to know the warning system is broken**
+
+### The Critical Difference
+
+| Normal Scenario | Bug Scenario |
+|----------------|--------------|
+| `useVirtualizer` used → Warning shown | `useVirtualizer` used → No warning |
+| Developer sees: "⚠️ incompatible-library" | Developer sees: "✅ All clear" |
+| Developer: "I need to handle this" | Developer: "Everything looks good!" |
+| ✅ Debuggable | ❌ Silent failure |
 
 ### User's Perspective
 
@@ -302,36 +321,54 @@ User report:
 
 ### Debug Perspective
 
-**What developer sees in React DevTools:**
+**What developer sees:**
 
 ```
-CustomHookPage
-  ✅ Memoized by React Compiler
-  ✅ Props didn't change
-  ✅ State didn't change
-  ❓ Why is it re-rendering expensive calculations?
+ESLint: ✅ Clean
+TypeScript: ✅ No errors
+Build: ✅ Success
+React DevTools: ✅ Component memoized
+Performance: ❌ SLOW (Why?!)
 ```
 
-**What's actually happening:**
+**What developer tries:**
+
+1. Check React DevTools Profiler → Component looks optimized ✅
+2. Check Network tab → No issues ✅
+3. Check Memory leaks → Nothing ✅
+4. Check console → No warnings ✅
+5. Check ESLint → All clean ✅
+6. **Cannot find the cause** ❌
+
+**What's actually happening (hidden):**
 
 ```
-CustomHookPage (memoized) ✅
+useVirtualScroll hook
   ↓
-useVirtualScroll (NOT memoized) ❌
+eslint-disable comment exists
   ↓
-Returns new object ❌
+React Compiler: "I'll skip this hook" (SILENT)
   ↓
-Memo cache invalidated ❌
+incompatible-library check: NEVER RUNS
   ↓
-Expensive calculations re-run 💥
+No warning shown to developer
+  ↓
+Hook returns unstable references
+  ↓
+Component memo cache breaks
+  ↓
+Performance degrades
+  ↓
+Developer sees nothing wrong in tools
 ```
 
-**Debug difficulty:** 🔴 Very difficult
+**Debug difficulty:** 🔴 IMPOSSIBLE without deep knowledge
 
-- No warnings
-- No errors
-- Looks like it should work
-- Actual cause hidden deep in custom hook
+**Why it's impossible:**
+- The tool that SHOULD warn you (ESLint) is silently broken
+- No warnings, no errors, no indication of problem
+- Everything LOOKS correct in all dev tools
+- Root cause is invisible unless you check build output manually
 
 ---
 

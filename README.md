@@ -39,34 +39,50 @@ npm run lint
 
 ## 💥 Why This Matters
 
+### The Core Problem: Broken Warning System
+
+This is NOT just about optimization. **The warning system itself is silently broken.**
+
+#### 🟢 Normal Scenario (Debuggable)
 ```typescript
-// Custom hook
+// Without eslint-disable
 function useCustomHook() {
-  const api = useVirtualizer({...});  // 😴 No warning!
+  const api = useVirtualizer({...});  // ⚠️ Warning: incompatible-library
+  return api;
+}
+```
+**Result:** ✅ Developer sees warning → Can debug → Problem solved
+
+#### 🔴 Bug Scenario (Silent Failure)
+```typescript
+// With eslint-disable
+function useCustomHook() {
+  const api = useVirtualizer({...});  // 😴 NO WARNING!
   
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {...}, []);  // ← Because of this
+  useEffect(() => {...}, []);  // ← This breaks the warning system
   
   return api;
 }
+```
+**Result:** 
+- ❌ No ESLint warning (silently suppressed)
+- ❌ Developer thinks everything is fine
+- ❌ Hook returns unstable references
+- ❌ Component memoization breaks
+- ❌ **Cannot debug (no warnings!)**
 
-// Component
-function Component() {
-  const $ = useMemoCache(10);  // ✅ Memoized
-  const api = useCustomHook();  // ❌ New object every render
+### Why It's Critical
+
+```
+Without eslint-disable:
+  useVirtualizer → ⚠️ Warning shown → Developer fixes → ✅ Problem solved
   
-  // Memo cache invalidated every time
-  if ($[1] !== api) {  // ← Always true!
-    // Recalculate every time 💥
-  }
-}
+With eslint-disable:
+  useVirtualizer → 😴 No warning → Developer unaware → ❌ Silent failure
 ```
 
-**Result:**
-- No ESLint warning → Developer doesn't know
-- Component is memoized → Looks OK
-- But internal objects have new references every render → Actually NG
-- **→ Unpredictable behavior**
+**The warning exists to protect you. When `eslint-disable` removes it, you're coding blind.**
 
 ---
 
@@ -116,17 +132,22 @@ function Component() {
 ## 📂 Key Files
 
 ```
-src/
-├── hooks/
-│   ├── useIncompatibleMovieList.ts  # Bug reproduction (line 61, 83)
-│   └── edgeCaseTests.ts             # 15 test cases
-├── pages/
-│   ├── CustomHookPage.tsx           # Demo page
-│   ├── IncompatiblePage.tsx         # Direct use example
-│   └── ...
-└── api/
-    └── mockApi.ts                   # Mock data
+├── CORE_ISSUE.md                    # 📌 Core problem explanation (READ THIS FIRST!)
+├── BUG_REPORT.md                    # Detailed bug report for React team
+├── README.md                        # This file
+└── src/
+    ├── hooks/
+    │   ├── useIncompatibleMovieList.ts  # Bug reproduction (line 78, 100)
+    │   └── edgeCaseTests.ts             # 15 edge case tests
+    ├── pages/
+    │   ├── CustomHookPage.tsx           # Demo page
+    │   ├── IncompatiblePage.tsx         # Direct use example
+    │   └── ...
+    └── api/
+        └── mockApi.ts                   # Mock data
 ```
+
+**Start here:** Read `CORE_ISSUE.md` to understand the core problem.
 
 ---
 
