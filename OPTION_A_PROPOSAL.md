@@ -110,47 +110,42 @@ function generateIncompatibleLibraryMessage(
 ): CompilerError {
   const hasEslintDisable = hasESLintDisableComment(fn, sourceCode);
   
-  let description = `Component uses ${apiName}`;
+  let reason, description;
   
   if (hasEslintDisable) {
-    description = `
-⚠️ CRITICAL: eslint-disable detected in this hook
-
-React Compiler cannot optimize this hook due to 'eslint-disable' comment.
-This hook also uses incompatible API '${apiName}'.
-
-🚨 WARNING: The eslint-disable comment will suppress this warning in the
-future, causing silent failures in components using this hook.
-
-💡 SOLUTIONS:
-
-1. RECOMMENDED: Remove eslint-disable and list all dependencies
-2. Add "use no memo" directive to this hook
-3. Add "use no memo" to components using this hook
-
-📚 Learn more: https://react.dev/learn/react-compiler#suppressing-the-compiler
-    `.trim();
+    reason = 'Compilation skipped: eslint-disable detected';
+    description =
+      '⚠️ React Compiler cannot optimize this code due to eslint-disable.\n\n' +
+      'This suppression may hide critical issues:\n' +
+      '• Incompatible API warnings (e.g., ' + apiName + ')\n' +
+      '• Hook dependency problems\n' +
+      '• Memoization failures in components using this code\n\n' +
+      'To fix:\n' +
+      '1. Remove eslint-disable and address the underlying issue, or\n' +
+      '2. Add "use no memo" directive to explicitly opt out\n\n' +
+      'Learn more: https://react.dev/learn/react-compiler#troubleshooting';
+  } else {
+    reason = 'Use of incompatible library';
+    description = `Component uses ${apiName}`;
   }
   
   return {
     kind: 'CompileError',
     detail: {
       severity: CompilerErrorDetailSeverity.InvalidReact,
-      reason: hasEslintDisable 
-        ? "eslint-disable will suppress incompatible-library warning"
-        : "Use of incompatible library",
+      reason,
       description,
       loc,
-      suggestions: [
+      suggestions: hasEslintDisable ? [
         {
-          description: "Remove eslint-disable and list all dependencies",
+          description: "Remove eslint-disable and address the issue",
           range: [loc.start, loc.end]
         },
         {
           description: 'Add "use no memo" directive',
           range: [loc.start, loc.end]
         }
-      ]
+      ] : null
     }
   };
 }
@@ -257,19 +252,22 @@ $ npm run build
 ```bash
 $ npm run build
 
-⚠️ CRITICAL: eslint-disable detected in useVirtualScroll
+Compilation skipped: eslint-disable detected
 
-React Compiler cannot optimize this hook due to 'eslint-disable' comment.
-This hook also uses incompatible API 'useVirtualizer'.
+⚠️ React Compiler cannot optimize this code due to eslint-disable.
 
-🚨 WARNING: The eslint-disable comment will suppress this warning,
-causing silent failures.
+This suppression may hide critical issues:
+• Incompatible API warnings (e.g., useVirtualizer)
+• Hook dependency problems
+• Memoization failures in components using this code
 
-💡 SOLUTIONS:
-1. Remove eslint-disable and list all dependencies
-2. Add "use no memo" directive
+To fix:
+1. Remove eslint-disable and address the underlying issue, or
+2. Add "use no memo" directive to explicitly opt out
 
-# Developer sees this BEFORE adding eslint-disable
+Learn more: https://react.dev/learn/react-compiler#troubleshooting
+
+# Developer sees this and understands the issue
 # Fixes it immediately
 # Ships safely to production
 ```

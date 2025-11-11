@@ -37,18 +37,20 @@ Component uses TanStack Virtual's useVirtualizer()
 
 **Proposed enhanced warning:**
 ```
-⚠️ CRITICAL: eslint-disable detected in this hook
+Compilation skipped: eslint-disable detected
 
-React Compiler cannot optimize this hook due to 'eslint-disable' comment.
-This hook also uses incompatible API 'useVirtualizer'.
+⚠️ React Compiler cannot optimize this code due to eslint-disable.
 
-🚨 WARNING: The eslint-disable comment will suppress this warning,
-causing silent failures in components using this hook.
+This suppression may hide critical issues:
+• Incompatible API warnings (e.g., useVirtualizer)
+• Hook dependency problems
+• Memoization failures in components using this code
 
-💡 SOLUTIONS:
-1. Remove eslint-disable and list all dependencies
-2. Add "use no memo" directive to this hook
-3. Add "use no memo" to components using this hook
+To fix:
+1. Remove eslint-disable and address the underlying issue, or
+2. Add "use no memo" directive to explicitly opt out
+
+Learn more: https://react.dev/learn/react-compiler#troubleshooting
 ```
 
 ---
@@ -67,7 +69,19 @@ function generateWarningMessage(apiName: string, loc: SourceLocation) {
   const hasEslintDisable = hasESLintDisableComment(fn, sourceCode);
   
   if (hasEslintDisable) {
-    return CRITICAL_WARNING_WITH_SOLUTIONS;
+    return {
+      reason: 'Compilation skipped: eslint-disable detected',
+      description: 
+        '⚠️ React Compiler cannot optimize this code due to eslint-disable.\n\n' +
+        'This suppression may hide critical issues:\n' +
+        '• Incompatible API warnings (e.g., ' + apiName + ')\n' +
+        '• Hook dependency problems\n' +
+        '• Memoization failures in components using this code\n\n' +
+        'To fix:\n' +
+        '1. Remove eslint-disable and address the underlying issue, or\n' +
+        '2. Add "use no memo" directive to explicitly opt out\n\n' +
+        'Learn more: https://react.dev/learn/react-compiler#troubleshooting'
+    };
   }
   
   return NORMAL_WARNING;
@@ -116,7 +130,7 @@ Previous PR attempted to create new ESLint rules. Feedback was "duplicates ESLin
 - Day 11: Finally found eslint-disable was the cause
 
 **With this fix:**
-- Day 1: Build shows "⚠️ CRITICAL: eslint-disable will suppress warnings"
+- Day 1: Build shows "Compilation skipped: eslint-disable detected" with clear explanation
 - Developer: "Oh, I see the problem!"
 - Fixed in 5 minutes
 
