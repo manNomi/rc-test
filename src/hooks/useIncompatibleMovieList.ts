@@ -35,16 +35,33 @@ interface UseVirtualScrollReturn {
 }
 
 /**
- * ⚠️ Test Case 2: Complex custom hook with eslint-disable comment
+ * ⚠️ Test Case 2: Complex custom hook with eslint-disable-next-line comment
  *
  * 🐛 BUG REPRODUCTION:
- * - Line 47: useVirtualizer should trigger incompatible-library warning
- * - Line 55: eslint-disable-next-line for exhaustive-deps
+ * This demonstrates a critical bug where `eslint-disable-next-line` comment
+ * unintentionally suppresses React Compiler warnings.
  *
- * Expected: Line 47 should show warning, line 55 disable should only affect that line
- * Actual: ❌ Line 47 warning is SUPPRESSED due to line 55's eslint-disable comment!
+ * PROBLEM:
+ * - Line 47: useVirtualizer (incompatible API) should trigger warning
+ * - Line 55: eslint-disable-next-line react-hooks/exhaustive-deps
  *
- * This is the bug we're reporting to React team.
+ * EXPECTED BEHAVIOR:
+ * - Line 47: Should show "incompatible-library" warning from React Compiler ESLint
+ * - Line 55: eslint-disable should ONLY affect exhaustive-deps rule on that specific line
+ *
+ * ACTUAL BEHAVIOR:
+ * ❌ Line 47's incompatible-library warning is INCORRECTLY SUPPRESSED!
+ *
+ * IMPACT ON USERS:
+ * 1. When custom hook uses incompatible API -> Component memoization works fine
+ * 2. But custom hook itself is NOT memoized -> needs "use no memo" directive
+ * 3. Without warning, users have NO WAY to know this
+ * 4. This creates silent performance issues and confusion
+ *
+ * WHY THIS IS CRITICAL:
+ * Users expect warnings when using incompatible APIs in custom hooks.
+ * The eslint-disable-next-line comment should NOT suppress unrelated React Compiler warnings.
+ * This breaks the entire purpose of the incompatible-library warning system.
  */
 export const useVirtualScroll = <T>({
   itemList,
