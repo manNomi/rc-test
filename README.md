@@ -104,11 +104,24 @@ With eslint-disable:
 2. Create new issue with BUG_REPORT.md content
 3. Include this repository URL
 
-#### Option B: Propose the Solution
-1. Go to React repository: https://github.com/facebook/react/issues
-2. Create new issue with PROPOSAL.md content
-3. Title: "[Proposal] ESLint rule to detect React Compiler interference"
-4. Or create PR for eslint-plugin-react-hooks
+#### Option B: Propose the Solution (Recommended!)
+
+Choose one of the templates:
+
+**Long Version** (comprehensive):
+1. Copy content from `ISSUE_TEMPLATE.md`
+2. Go to: https://github.com/facebook/react/issues/new
+3. Paste and submit
+
+**Short Version** (concise):
+1. Copy content from `ISSUE_TEMPLATE_SHORT.md`
+2. Go to: https://github.com/facebook/react/issues/new
+3. Paste and submit
+
+Or contribute directly:
+4. Fork `eslint-plugin-react-hooks`
+5. Implement the rule based on `PROPOSAL.md`
+6. Submit PR
 
 ### Workarounds
 
@@ -147,7 +160,9 @@ function Component() {
 ```
 ├── CORE_ISSUE.md                    # 📌 Core problem explanation (READ THIS FIRST!)
 ├── BUG_REPORT.md                    # Detailed bug report for React team
-├── PROPOSAL.md                      # 💡 Solution: New ESLint rule to detect this issue
+├── PROPOSAL.md                      # 💡 Complete solution proposal with implementation details
+├── ISSUE_TEMPLATE.md                # 📝 Long version - Copy/paste to submit issue
+├── ISSUE_TEMPLATE_SHORT.md          # 📝 Short version - Quick issue submission
 ├── README.md                        # This file
 └── src/
     ├── hooks/
