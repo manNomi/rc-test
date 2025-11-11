@@ -2,6 +2,8 @@
 
 **Bug Found:** When using `eslint-disable-next-line react-hooks/exhaustive-deps`, all react-hooks rules are ignored for the entire function
 
+**💡 New to this project?** Read **[SUMMARY.md](./SUMMARY.md)** first for a complete overview!
+
 ---
 
 ## 🚀 Quick Start
@@ -158,9 +160,10 @@ function Component() {
 ## 📂 Key Files
 
 ```
-├── CORE_ISSUE.md                    # 📌 Core problem explanation (READ THIS FIRST!)
-├── BUG_REPORT.md                    # Detailed bug report for React team
-├── PROPOSAL.md                      # 💡 Complete solution proposal with implementation details
+├── SUMMARY.md                       # 🎯 START HERE - Complete project overview
+├── CORE_ISSUE.md                    # 📌 Core problem explanation
+├── BUG_REPORT.md                    # 🐛 Detailed bug report for React team
+├── PROPOSAL.md                      # 💡 Solution: New ESLint rule proposal
 ├── ISSUE_TEMPLATE.md                # 📝 Long version - Copy/paste to submit issue
 ├── ISSUE_TEMPLATE_SHORT.md          # 📝 Short version - Quick issue submission
 ├── README.md                        # This file
@@ -176,9 +179,11 @@ function Component() {
         └── mockApi.ts                   # Mock data
 ```
 
-**Start here:** 
-1. Read `CORE_ISSUE.md` to understand the problem
-2. Read `PROPOSAL.md` to see the proposed solution
+**Reading order:** 
+1. `SUMMARY.md` - Complete overview (recommended first read)
+2. `CORE_ISSUE.md` - Understand the core problem
+3. `PROPOSAL.md` - See the proposed solution
+4. `ISSUE_TEMPLATE_SHORT.md` or `ISSUE_TEMPLATE.md` - Submit to React team
 
 ---
 
