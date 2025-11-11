@@ -2,10 +2,10 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useRef, useEffect } from "react";
 
 // ============================================================
-// 엣지 케이스 테스트: 어떤 패턴이 린트를 통과하는가?
+// Edge Case Tests: Which patterns pass the linter?
 // ============================================================
 
-// ✅ 베이스라인 1: 가장 간단한 함수 선언
+// ✅ Baseline 1: Simplest function declaration
 export function useSimplestFunction() {
   const parentRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
@@ -16,7 +16,7 @@ export function useSimplestFunction() {
   return { virtualizer, parentRef };
 }
 
-// ✅ 베이스라인 2: 가장 간단한 화살표 함수
+// ✅ Baseline 2: Simplest arrow function
 export const useSimplestArrow = () => {
   const parentRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
@@ -27,7 +27,7 @@ export const useSimplestArrow = () => {
   return { virtualizer, parentRef };
 };
 
-// 🔍 테스트 1: useEffect 추가
+// 🔍 Test 1: Adding useEffect
 export const useWithEffect = () => {
   const parentRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
@@ -59,7 +59,7 @@ export const useWithEffectDeps = (count: number) => {
   return { virtualizer, parentRef };
 };
 
-// 🔍 테스트 3: 복잡한 useEffect (virtualizer 사용)
+// 🔍 Test 3: Complex useEffect (using virtualizer)
 export const useWithComplexEffect = (count: number) => {
   const parentRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
@@ -76,7 +76,7 @@ export const useWithComplexEffect = (count: number) => {
   return { virtualizer, parentRef };
 };
 
-// 🔍 테스트 4: 제네릭만 추가
+// 🔍 Test 4: Adding generics only
 export const useWithGeneric = <T>(items: T[]) => {
   const parentRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
@@ -87,7 +87,7 @@ export const useWithGeneric = <T>(items: T[]) => {
   return { virtualizer, parentRef };
 };
 
-// 🔍 테스트 5: 제네릭 + useEffect
+// 🔍 Test 5: Generics + useEffect
 export const useWithGenericAndEffect = <T>(items: T[]) => {
   const parentRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
@@ -103,7 +103,7 @@ export const useWithGenericAndEffect = <T>(items: T[]) => {
   return { virtualizer, parentRef };
 };
 
-// 🔍 테스트 6: 객체 파라미터 (destructuring)
+// 🔍 Test 6: Object parameter (destructuring)
 export const useWithObjectParam = ({
   count,
   enabled,
@@ -120,7 +120,7 @@ export const useWithObjectParam = ({
   return { virtualizer, parentRef, enabled };
 };
 
-// 🔍 테스트 7: 객체 파라미터 + useEffect
+// 🔍 Test 7: Object parameter + useEffect
 export const useWithObjectParamAndEffect = ({
   count,
   enabled,
@@ -144,7 +144,7 @@ export const useWithObjectParamAndEffect = ({
   return { virtualizer, parentRef };
 };
 
-// 🔍 테스트 8: 제네릭 + 객체 파라미터
+// 🔍 Test 8: Generics + object parameter
 export const useWithGenericAndObject = <T>({
   items,
   enabled,
@@ -161,7 +161,7 @@ export const useWithGenericAndObject = <T>({
   return { virtualizer, parentRef, enabled };
 };
 
-// 🔍 테스트 9: 제네릭 + 객체 + useEffect (복잡한 로직)
+// 🔍 Test 9: Generics + object + useEffect (complex logic)
 export const useWithGenericObjectEffect = <T>({
   items,
   enabled,
@@ -186,7 +186,7 @@ export const useWithGenericObjectEffect = <T>({
   return { virtualizer, parentRef };
 };
 
-// 🔍 테스트 10: 다중 파라미터 (6개)
+// 🔍 Test 10: Multiple parameters (6 params)
 export const useWithManyParams = <T>({
   items,
   enabled,
@@ -218,7 +218,7 @@ export const useWithManyParams = <T>({
   };
 };
 
-// 🔍 테스트 11: 다중 파라미터 + 복잡한 useEffect
+// 🔍 Test 11: Multiple parameters + complex useEffect
 export const useWithManyParamsAndEffect = <T>({
   items,
   enabled,
@@ -261,7 +261,7 @@ export const useWithManyParamsAndEffect = <T>({
   return { virtualizer, parentRef };
 };
 
-// 🔍 테스트 12: Interface 사용
+// 🔍 Test 12: Using Interface
 interface VirtualScrollProps<T> {
   items: T[];
   enabled: boolean;
@@ -306,7 +306,7 @@ export const useWithInterface = <T>({
   return { virtualizer, parentRef };
 };
 
-// 🔍 테스트 13: Interface + 반환 타입 명시
+// 🔍 Test 13: Interface + explicit return type
 interface VirtualScrollReturn {
   virtualizer: ReturnType<typeof useVirtualizer>;
   parentRef: React.RefObject<HTMLDivElement | null>;
@@ -347,7 +347,7 @@ export const useWithInterfaceAndReturnType = <T>({
   return { virtualizer, parentRef };
 };
 
-// 🔍 테스트 14: 변수명 변경 (rowVirtualizer)
+// 🔍 Test 14: Different variable name (rowVirtualizer)
 export const useWithDifferentVarName = <T>({
   items,
   enabled,
@@ -364,7 +364,7 @@ export const useWithDifferentVarName = <T>({
   return { rowVirtualizer, parentRef, enabled };
 };
 
-// 🔍 테스트 15: Optional chaining 사용
+// 🔍 Test 15: Using optional chaining
 export const useWithOptionalChaining = <T>({
   items,
   enabled,

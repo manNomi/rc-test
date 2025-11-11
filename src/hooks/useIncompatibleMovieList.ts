@@ -71,15 +71,15 @@ export const useVirtualScroll = <T>({
   settedPrevItemLength = 5,
   settedEstimateSize = 60,
 }: UseVirtualScrollProps<T>): UseVirtualScrollReturn => {
-  // 가상 리스트를 위한 부모 ref
+  // Parent ref for virtual list
   const parentRef = useRef<HTMLDivElement>(null);
 
-  // 가상 리스트 설정
+  // Virtual list configuration
   const rowVirtualizer = useVirtualizer({
     count: itemList?.length ?? 0,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => settedEstimateSize, // 각 아이템의 예상 높이 (space-y-3 포함)
-    overscan: 5, // 화면 밖 렌더링할 아이템 수
+    estimateSize: () => settedEstimateSize, // Estimated height of each item
+    overscan: 5, // Number of items to render outside viewport
   });
 
   useEffect(() => {
@@ -89,7 +89,7 @@ export const useVirtualScroll = <T>({
     const lastItem = virtualItems[virtualItems.length - 1];
     if (!lastItem) return;
 
-    // 마지막에서 3개 전 아이템이 보이면 다음 페이지 로드
+    // Load next page when approaching the end
     if (
       lastItem.index >= (itemList?.length ?? 0) - settedPrevItemLength &&
       hasNextPage &&
